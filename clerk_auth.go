@@ -16,6 +16,13 @@ type ctxKey string
 
 const ClerkUserIDKey ctxKey = "clerkUserID"
 
+func getEnv(key, defaultVal string) string {
+    if val := os.Getenv(key); val != "" {
+        return val
+    }
+    return defaultVal
+}
+
 func extractBearerToken(r *http.Request) (string, error) {
     auth := r.Header.Get("Authorization")
     if auth == "" {
@@ -59,7 +66,6 @@ func verifyToken(ctx context.Context, token string, jwksClient *jwks.Client) (st
 
 func ClerkAuthMiddleware(next http.Handler) http.Handler {
     secret := getEnv("CLERK_SECRET", "sk_test_dh1gBNQXBQ11CdVVXEd83PGhOxBCFQZEKBHFyvz7EG")
-    secret := os.GetEnv("CLERK_SECRET")
     if secret == "" {
         panic("CLERK_SECRET environment variable not set")
     }
